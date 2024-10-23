@@ -10,7 +10,7 @@ const shareText = '¿Listo para una dosis de miedo? Esta imagen ahora es pura pe
     <a 
     id="facebook"
     class="facebook social"
-    href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl}&t=${shareText}`}
+    href={`https://www.facebook.com/sharer/sharer.php?u=${shareUrl.replace('%20', '+').replace(' ', '+')}&t=${shareText}`}
     target="_blank"
     >
     <FacebookIcon />
