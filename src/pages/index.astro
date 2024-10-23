@@ -1,16 +1,88 @@
 ---
+import Layout from '../layouts/Layout.astro';
+import { CldUploadWidget } from 'astro-cloudinary';
 
+const options={
+  sources: ['local'],
+  multiple: false,
+  maxFiles: 1
+}
+
+const config={
+  cloud: {
+    cloudName: import.meta.env.PUBLIC_CLOUDINARY_CLOUD_NAME,
+    apiKey: import.meta.env.PUBLIC_CLOUDINARY_API_KEY
+  }
+}
 ---
 
-<html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
-</html>
+<Layout title="Spookypic">
+	<main>
+		<picture>
+			<img src="spookypic.png" alt="SpookyPic Logo" width="700px">
+		</picture>
+		<CldUploadWidget id="upload-events"  options={options} config={config} uploadPreset={import.meta.env.CLOUDINARY_PRESET}>
+			<button>Upload</button>
+		</CldUploadWidget>
+	</main>
+
+	<style>
+		main {
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			align-items: center;
+			height: 100vh;
+		}
+
+		button{
+			padding: 10px 20px;
+			font-size: 1.5rem;
+			transition: opacity 2s;
+		}
+
+		img{
+			animation: fade 1s;
+			
+		}
+
+		@keyframes fade {
+			0% {
+				transform: translateY(70px);
+				opacity: 0;
+			}
+	
+			100% {
+				transform: translateY(0);
+				opacity: 1;
+			}
+		}
+	</style>
+
+	<script defer>
+		const img = document.querySelector('img');
+		const button = document.querySelector('button');
+		button.style.opacity = '0';
+		img.addEventListener('animationstart', () => {
+			img.style.opacity = '1';
+			button.style.opacity = '1';
+		});
+	</script>
+	<script>
+		import { navigate } from 'astro:transitions/client';
+		const widget = document.querySelector('#upload-events');
+	
+		if ( widget ) {
+			widget.addEventListener('clduploadwidget:success', ((e: CustomEvent<{ UploadWidget: Object, info: Object }>) => {
+				navigate(`/image/${e.detail.info.public_id}`);
+				e.detail.UploadWidget.close();
+				// {
+					//  event: '<Event>',
+						//  info: '<Cloudinary Resource>',
+				//  UploadWidget // Widget Instance,
+				// }
+			}) as EventListener);
+		}
+	</script>
+</Layout>
+

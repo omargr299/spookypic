@@ -1,0 +1,231 @@
+---
+
+import { getCldImageUrl } from 'astro-cloudinary/helpers';
+import Layout from '../../layouts/Layout.astro';
+import {parseSearchParams} from '@utils/image'
+import Tools from '@components/Tools.astro';
+import ImagePreview from '@components/ImagePreview.astro';
+
+const {id} = Astro.params;
+const transformations = parseSearchParams(Astro.url.searchParams);
+const imageUrl = getCldImageUrl({src:id, ...transformations});
+
+---
+
+<Layout title="Spookypic | Aterroriza tu imagen">
+    <Fragment slot="share">
+        <meta property="og:url" content={Astro.url}>
+        <meta property="og:type" content="website">
+        <meta property="og:title" content="Lo mas espeluznante de Halloween">
+        <meta property="og:description" content="Edita tu imagen de Halloween con SpookyPic">
+        <meta property="og:image" content={imageUrl}>
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Lo mas espeluznante de Halloween">
+        <meta name="twitter:description" content="Edita tu imagen de Halloween con SpookyPic">
+        <meta name="twitter:image" content={imageUrl}>
+    </Fragment>
+   
+    <main>
+        <header>
+            <h1>Aterroriza tu imagen 🎃</h1>
+        </header>
+        <div id="container">
+            <section id="imageContainer">
+                <ImagePreview imageUrl={imageUrl} />
+            </section>
+            <section id="tools">
+                <Tools />
+            </section>
+        </div>
+    </main>
+  
+    <style is:global>
+        .background{
+            filter: blur(5px);
+        }
+
+        button{
+            padding-inline: 5px;
+            padding-block: 5px;
+            font-size: 1em;
+
+            &#removeObjects{
+                margin-top: 10px;
+            }
+        }
+
+        input[type="text"]{
+            width: 100%;
+            padding: 0.5rem;
+            margin: 0.5rem 0;
+
+        }
+    </style>
+    <style>
+        main{
+            margin: auto;
+            color: var(--text-color);
+            max-width: 1200px;
+            padding-inline: 20px;
+            padding-bottom: 20px;
+
+            #container{
+                display: grid;
+                margin: auto;
+                grid-template-columns: 1fr 1fr;
+                height: 100%;
+
+                
+                
+                @media screen and (width < 768px){
+                    grid-template-columns: 1fr;
+                    gap: 10px;
+
+                    section{
+                      
+                    }
+                }
+            }
+        }
+
+        header{
+            text-align: center;
+
+            padding-block: 30px;
+        }
+        
+        
+    </style>
+
+
+    <script>
+        import {  getCldImageUrl } from "astro-cloudinary/helpers";
+        import backgroundTopics from '../../constants/backgrounds.json';
+        import {parseSearchParams} from '@utils/image'
+        import {getRandomMessage} from '@utils/message'
+        import { createTag } from "src/scripts/tagInput";
+
+        const image = document.querySelector('#image') as HTMLImageElement;
+    
+        const options = parseSearchParams(new URLSearchParams(window.location.search));
+        
+        const spinner = document.querySelector('#spinner') as HTMLDivElement;
+        const spinnerMessage = document.querySelector('#message') as HTMLDivElement;
+        spinnerMessage.textContent = getRandomMessage();
+        spinner.classList.add('paused');
+        spinner.style.display = 'none';
+        const changeImage = ()=>{
+            const url = getCldImageUrl({src:image.src, ...options});
+            image.src = url;
+            image.style.opacity = '0.3';
+            spinner.classList.remove('paused');
+            spinner.style.display = 'flex';
+            const timer = setInterval(() => {
+                spinnerMessage.style.opacity = '0';
+                spinnerMessage.style.transform = 'translateY(-10px)';
+                setTimeout(() => {
+                    spinnerMessage.textContent = getRandomMessage();
+                    spinnerMessage.style.opacity = '1';
+                    spinnerMessage.style.transform = 'translateY(0)';
+                }, 1000);
+            }, 5000);
+            image.onload = () => {
+                image.style.opacity = '1';
+                spinner.classList.add('paused');
+                spinner.style.display = 'none';
+                clearInterval(timer);
+                const searchParams = new URLSearchParams(options);
+                searchParams.delete('remove');
+                options["remove"]?.prompt.forEach(tag => {
+                    searchParams.append('remove', tag);
+                });
+                window.history.pushState({}, '', `?${searchParams.toString()}`);
+            }
+        }
+        
+        const download = document.querySelector('#download') as HTMLButtonElement;
+        download.addEventListener('click', async () => {
+            const response = await fetch(image.src);
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'spookyPic.jpg';
+            a.click();
+            URL.revokeObjectURL(url);
+        });
+        
+
+        const bgButtons = document.querySelectorAll('#backgroundOptions button');
+        Array.from(bgButtons).forEach((button)=>{
+            
+            button.addEventListener('click', (e) => {
+                const topic = (e.target as HTMLElement).getAttribute('data-topic');
+                const promptList = backgroundTopics[topic];
+                const promptIndex = Math.floor(Math.random() * promptList.length);
+                const prompt = promptList[promptIndex];
+                options["replaceBackground"] = prompt;
+                changeImage();
+            }); 
+        });
+
+        const outfit = document.querySelector('#outfit') as HTMLInputElement;
+        outfit.value = options["outfit"] || '';
+        outfit.addEventListener('change', (e) => {
+            options["replace"] = {
+                from: 'outfit',
+                to: (e.target as HTMLInputElement).value
+            };
+            changeImage();
+        });
+
+        const tagInput = document.querySelector('#tagInput') as HTMLInputElement;
+        const removeObjects = document.querySelector('#removeObjects') as HTMLInputElement;
+        options["remove"]?.prompt.forEach(tag => {
+            createTag(tagInput.parentElement, tagInput, tag);
+        });
+        removeObjects.addEventListener('click', () => {
+            const tags = Array.from(tagInput.parentElement.querySelectorAll('.tag')); 
+
+            options["remove"] = {
+                prompt: tags.map(tag => tag.querySelector('span').textContent),
+                multiple: true
+            }
+            
+            changeImage();
+        });
+
+        const sharpen = document.querySelector('#sharpen') as HTMLInputElement;
+        const amplitude = document.querySelector('#amplitude') as HTMLInputElement;
+        const movement = document.querySelector('#movement') as HTMLInputElement;
+
+        sharpen.checked = options["sharpen"];
+        sharpen.addEventListener('change', (e) => {
+            options["sharpen"] = (e.target as HTMLInputElement).checked;
+            changeImage();
+        });
+
+
+        amplitude.checked = options["fillBackground"];
+        amplitude.addEventListener('change', (e) => {
+            options["fillBackground"] = (e.target as HTMLInputElement).checked;
+            options["aspectRatio"] = (e.target as HTMLInputElement).checked ? '16:9' : '';
+            changeImage();
+        });
+
+        // movement.checked = options["autoAnimate"];
+        // movement.addEventListener('change',async (e) => {
+        //     // options["autoAnimate"] = e.target.checked;
+        //     // changeImage();
+        //     if(e.target.checked){
+        //         console.log('creating video');
+        //         const result = await actions.movement({url:image.src});
+        //         console.log(result);
+        //     }
+        //     console.log('movement');
+        // });
+
+    </script>
+
+
+</Layout>

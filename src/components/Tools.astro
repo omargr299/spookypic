@@ -1,0 +1,89 @@
+---
+import Checkbox from "./Checkbox.astro";
+import TagInput from "./TagInput.astro";
+---
+
+<main>
+    <details id="backgroundOptions">
+        <summary>Cambia el fondo</summary>
+        <div>
+            <button data-topic="ghosts">Fantasmas</button>
+            <button data-topic="witches">Brujas</button>
+            <button data-topic="aliens">Aliens</button>
+            <button data-topic="monsters">Monstruos</button>
+            <button data-topic="vampires">Vampiros</button>
+            <button data-topic="spiders">Arañas</button>
+            <button data-topic="zombies">Zombies</button>
+            <button data-topic="random">Random</button>
+        </div>
+    </details>
+    <details>
+        <summary>Cambiar vestimenta</summary>
+        <input id="outfit" type="text" placeholder="Ropa de zombie...">
+    </details>
+    <details>
+        <summary>Eliminar objetos</summary>
+        
+        <TagInput id="tagInput"/>
+        <button id="removeObjects">Remover</button>
+    </details>
+    <div class="checkboxContainer">
+        <span>Mejora automática de imagen</span>
+        <Checkbox id="sharpen" />
+    </div>
+    <div class="checkboxContainer">
+        <span>Ampliación automática de fondo</span>
+        <Checkbox id="amplitude" />
+    </div>
+    <!-- <div class="checkboxContainer">
+        <span>Agregar movimiento automático</span>
+        <Checkbox id="movement"/>
+    </div> -->
+</div>
+
+<style>
+
+    main{
+        padding: 15px;
+        background-color: var(--background-light-color);
+        border-radius: 20px;
+        max-width: 500px;
+        margin-inline: auto;
+        height: 100%;
+    }
+
+    details {
+        width: 100%;
+        margin-bottom: 10px;
+        padding-block: 15px;
+        padding-inline: 10px;
+        cursor: pointer;
+        border: solid 1px;
+        border-color: transparent;
+        border-radius: 10px;
+        
+        &:hover{
+            color: var(--color-primary);
+            border-color: var(--color-primary);
+        }
+
+        &[open]{
+            color: var(--color-primary);
+        }
+    }
+
+    .checkboxContainer{
+        padding-block: 15px;
+        padding-inline: 10px;
+    }
+
+    #backgroundOptions{
+        div{
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 15px;
+        }
+    }
+</style>

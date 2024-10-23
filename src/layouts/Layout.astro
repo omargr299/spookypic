@@ -1,0 +1,101 @@
+---
+
+import {ViewTransitions} from "astro:transitions";
+import "../styles/global.css";
+import { custom } from "astro:schema";
+
+const share = {
+	title: "SpookyPic 🎃 | Cloudinary Hackaton",
+	description: "Edita tu imagen de Halloween con SpookyPic",
+	image: Astro.url + "spookypic.jpg",
+}
+
+const {title} = Astro.props
+
+const anim = {
+	old: {
+		name: "slideUp",
+		duration: "0.7s",
+		easing: "ease-in-out",
+	},
+	new: {
+		name: "slideDown",
+		duration: "0.7s",
+		easing: "ease-in-out",
+	},
+}
+
+const customTransition = {
+	forwards: anim,
+	backwards: anim,
+}
+---
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<ViewTransitions />
+		<meta name="viewport" content="width=device-width" />
+		<meta name="generator" content={Astro.generator} />
+		<slot name="share">
+			<meta property="og:url" content={Astro.url}>
+			<meta property="og:type" content="website">
+			<meta property="og:title" content={share.title}>
+			<meta property="og:description" content={share.description}>
+			<meta property="og:image" content={share.image}>
+			<meta name="twitter:card" content="summary_large_image">
+			<meta name="twitter:title" content={share.title}>
+			<meta name="twitter:description" content={share.description}>
+			<meta name="twitter:image" content={share.image}>
+		</slot>
+		
+		<title>{title}</title>
+	</head>
+	<body >
+		<div transition:persist class="background"></div>
+		<div transition:animate={customTransition}>
+			<slot></slot>
+		</div>
+	</body>
+
+</html>
+
+<style>
+	.background{
+		background-image: url("/background.jpg");
+		background-position: center;
+ 		background-repeat: no-repeat;
+		background-size: cover;
+		height: 100vh;
+		width: 100vw;
+		position: fixed;
+		z-index: -100;
+
+		@media screen and (width < 768px) {
+			background-image: url("/background-mobile.jpg");
+	
+		}
+	}
+</style>
+
+<style is:global>
+	@keyframes slideUp {
+		0% {
+			transform: translateY(0);
+		}
+		100% {
+			transform: translateY(-100%);
+		}
+		
+	}
+
+	@keyframes slideDown {
+		0% {
+			transform: translateY(100%);
+		}
+		100% {
+			transform: translateY(0);
+		}
+		
+	}
+</style>

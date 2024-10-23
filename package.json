@@ -10,6 +10,10 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^4.16.5"
+    "": "file:",
+    "@astrojs/vercel": "^7.8.2",
+    "@runwayml/sdk": "^1.2.0",
+    "astro": "^4.16.5",
+    "astro-cloudinary": "^1.1.2"
   }
 }

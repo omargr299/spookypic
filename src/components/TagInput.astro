@@ -1,0 +1,68 @@
+---
+const {id} = Astro.props;
+---
+
+<div id="tagInputContainer">
+    <input type="text" placeholder="Add a tag" id="tagInput"/>
+</div>
+
+<style>
+    #tagInputContainer {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.5rem;
+        margin-top: 15px;
+        border: solid 1px black;
+        max-width: 300px;
+    }
+
+    
+    #tagInput[type="text"] {
+        width: 100%;
+        min-width: 50px;
+        padding: 0.5rem;
+        flex: 1;
+        color: white;
+    }
+
+    
+</style>
+
+<style is:global>
+    .tag{
+        padding: 0.5rem;
+        background-color: var(--color-secondary);
+        border-radius: 5px;
+        color: white;
+    }
+
+    .removeButton {
+
+        text-transform: uppercase;
+        border-radius: 5px;
+        padding: 2px 3px;as
+        margin-inline-start: 5px;
+
+        &:hover{
+            background-color: rgba(220, 220, 220, 0.267);
+            color: white;
+        }
+    }
+</style>
+
+<script>
+    import { createTag } from "src/scripts/tagInput";
+
+    const container = document.querySelector('#tagInputContainer');
+    const input = document.querySelector('#tagInput');
+
+    input.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){
+            createTag(container, input);
+            input.value = '';
+        }
+        
+    });
+</script>

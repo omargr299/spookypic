@@ -1,0 +1,96 @@
+@property --color-primary {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #FD7D3B;
+}
+
+@property --color-primary-light {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #f89f73;
+}
+
+@property --color-secondary {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #870040;
+}
+
+@property --color-secondary-light {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #854161;
+}	
+
+@property --background-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: black;
+}
+
+@property --background-light-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #261c21;
+}
+
+@property --background-accent-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: #201218;
+}
+
+@property --background-gradient-color {
+    syntax: "<gradient>";
+    inherits: true;
+    initial-value: radial-gradient(circle, rgba(41,71,44,1) 0%, rgba(28,28,28,1) 52%, rgba(14,14,14,1) 100%)
+}
+
+@property --text-color {
+    syntax: "<color>";
+    inherits: true;
+    initial-value: rgb(235, 235, 235);
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+html{
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+body{
+    font-family: 'Roboto', sans-serif;;
+}
+
+button{
+    cursor: pointer;
+    background-color: var(--color-primary);
+    color: var(--text-color);
+    border: none;
+    border-radius: 10px;
+
+    &:hover{
+        background-color: var(--color-primary-light);
+    }
+
+    &.transparent{
+        background-color: transparent;
+        color: var(--text-color);
+    }
+}
+
+input{
+    color: var(--text-color);
+    outline: none;
+    background-color: var(--background-accent-color);
+    border: solid 1px transparent;
+    border-radius: 5px;
+
+    &[type='text']:focus{
+        border: 1px solid var(--color-secondary);
+    }
+}
