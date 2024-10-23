@@ -15,11 +15,11 @@ const shareText = '¿Listo para una dosis de miedo? Esta imagen ahora es pura pe
     >
     <FacebookIcon />
 </a>
-<a id="whatsapp" href = {`whatsapp://send?text=${shareText + shareUrl}`} class="social">
+<a id="whatsapp" href = {`whatsapp://send?text=${shareText + '\n' + shareUrl}`} class="social">
     <WhatsappIcon />
 </a>
 <a 
-href={`https://twitter.com/intent/tweet?ref_src=${shareUrl}&text=${shareText}`} 
+href={`https://twitter.com/intent/tweet?&text=${shareText + '\n' + shareUrl}`} 
 id="twitter"
 class="social" 
 data-show-count="false"
